@@ -1,0 +1,115 @@
+:root {
+  --ct-green: #0b6b2f; /* primary */
+  --ct-green-dark: #064a1e; /* darker */
+  --ct-forest: #05391a; /* accent */
+  --ct-soft-green: #e6f3ea; /* light panel */
+  --ct-page: #eef6f0; /* page bg */
+  --ct-ink: #09210f; /* darker text */
+}
+
+body {
+  background: var(--ct-page);
+  color: var(--ct-ink);
+}
+
+.navbar {
+  background: linear-gradient(180deg, var(--ct-forest), var(--ct-green-dark));
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.navbar-brand {
+  font-weight: 800;
+  color: #fff !important;
+}
+
+.btn-cleantrack {
+  background: var(--ct-green);
+  border-color: var(--ct-green);
+  color: #fff;
+}
+
+.btn-cleantrack:hover {
+  background: var(--ct-green-dark);
+  border-color: var(--ct-green-dark);
+  color: #fff;
+}
+
+.hero {
+  background:
+    linear-gradient(rgba(5, 57, 26, 0.78), rgba(5, 57, 26, 0.78)),
+    url("https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=1600&q=80");
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  min-height: 72vh;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-shell {
+  min-height: calc(100vh - 56px);
+}
+
+.sidebar {
+  background: var(--ct-soft-green);
+  border-right: 1px solid rgba(6,80,38,0.08);
+}
+
+.sidebar .nav-link {
+  color: #183226;
+  border-radius: 6px;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+  background: rgba(6,105,45,0.08);
+  color: var(--ct-forest);
+}
+
+.stat-card,
+.content-card {
+  background: #fff;
+  border: 1px solid #dfe6e2;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.28rem 0.62rem;
+  text-transform: capitalize;
+}
+
+.status-pending { background: #fff3cd; color: #8a5a00; }
+.status-assigned { background: #dcecff; color: #0b5cab; }
+.status-on_the_way { background: #eadcff; color: #5b20a0; }
+.status-collected { background: #d9f2e2; color: #146c37; }
+.status-failed { background: #f8d7da; color: #a61b2b; }
+.status-cancelled { background: #e9ecef; color: #596169; }
+
+.table-responsive {
+  background: #fff;
+  border: 1px solid #dfe6e2;
+  border-radius: 8px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--ct-green);
+  box-shadow: 0 0 0 0.2rem rgba(11, 107, 47, 0.16);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 66vh;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid #dfe6e2;
+  }
+}

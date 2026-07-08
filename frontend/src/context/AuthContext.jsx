@@ -18,23 +18,58 @@ export const AuthProvider = ({ children }) => {
     // AuthContext loads the current user once so every page can know who is logged in.
     authService
       .me()
-      .then((response) => setUser(response.data.user))
-      .catch(() => localStorage.removeItem("cleantrack_token"))
+      .then((response) => {
+        if (response.data && response.data.user) {
+          setUser(response.data.user);
+        } else {
+          // Token is invalid, clear it
+          localStorage.removeItem("cleantrack_token");
+          setUser(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Session validation failed:", error.message);
+        // Token is invalid or expired, remove it
+        localStorage.removeItem("cleantrack_token");
+        setUser(null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
   const login = async (credentials) => {
-    const response = await authService.login(credentials);
-    localStorage.setItem("cleantrack_token", response.data.token);
-    setUser(response.data.user);
-    return response.data.user;
+    try {
+      const response = await authService.login(credentials);
+      if (response.data && response.data.token && response.data.user) {
+        localStorage.setItem("cleantrack_token", response.data.token);
+        setUser(response.data.user);
+        return response.data.user;
+      } else {
+        throw new Error("Invalid response from server");
+      }
+    } catch (error) {
+      // Clear any partial session data on error
+      localStorage.removeItem("cleantrack_token");
+      setUser(null);
+      throw error;
+    }
   };
 
   const register = async (form) => {
-    const response = await authService.register(form);
-    localStorage.setItem("cleantrack_token", response.data.token);
-    setUser(response.data.user);
-    return response.data.user;
+    try {
+      const response = await authService.register(form);
+      if (response.data && response.data.token && response.data.user) {
+        localStorage.setItem("cleantrack_token", response.data.token);
+        setUser(response.data.user);
+        return response.data.user;
+      } else {
+        throw new Error("Invalid response from server");
+      }
+    } catch (error) {
+      // Clear any partial session data on error
+      localStorage.removeItem("cleantrack_token");
+      setUser(null);
+      throw error;
+    }
   };
 
   const logout = () => {
@@ -47,4 +82,10 @@ export const AuthProvider = ({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

@@ -6,55 +6,71 @@ const getManagerCompanyId = async (managerId) => {
 };
 
 const createTruck = async (req, res) => {
-  const { truck_number_plate, truck_capacity, driver_id, status = "active" } = req.body;
-  const companyId = await getManagerCompanyId(req.user.id);
+  try {
+    const { truck_number_plate, truck_capacity, driver_id, status = "active" } = req.body;
+    const companyId = await getManagerCompanyId(req.user.id);
 
-  if (!companyId) return res.status(400).json({ message: "Create a company profile first" });
-  if (!truck_number_plate) return res.status(400).json({ message: "Truck number plate is required" });
+    if (!companyId) return res.status(400).json({ message: "Create a company profile first" });
+    if (!truck_number_plate) return res.status(400).json({ message: "Truck number plate is required" });
 
-  const [result] = await pool.query(
-    "INSERT INTO trucks (company_id, truck_number_plate, truck_capacity, driver_id, status) VALUES (?, ?, ?, ?, ?)",
-    [companyId, truck_number_plate, truck_capacity || null, driver_id || null, status]
-  );
+    const [result] = await pool.query(
+      "INSERT INTO trucks (company_id, truck_number_plate, truck_capacity, driver_id, status) VALUES (?, ?, ?, ?, ?)",
+      [companyId, truck_number_plate, truck_capacity || null, driver_id || null, status]
+    );
 
-  res.status(201).json({ message: "Truck created", id: result.insertId });
+    res.status(201).json({ message: "Truck created", id: result.insertId });
+  } catch (error) {
+    res.status(500).json({ message: "Could not create truck", error: error.message });
+  }
 };
 
 const getCompanyTrucks = async (req, res) => {
-  const companyId = await getManagerCompanyId(req.user.id);
-  if (!companyId) return res.json([]);
+  try {
+    const companyId = await getManagerCompanyId(req.user.id);
+    if (!companyId) return res.json([]);
 
-  const [trucks] = await pool.query(
-    `SELECT t.*, u.full_name AS driver_name
-     FROM trucks t
-     LEFT JOIN users u ON u.id = t.driver_id
-     WHERE t.company_id = ?
-     ORDER BY t.created_at DESC`,
-    [companyId]
-  );
-  res.json(trucks);
+    const [trucks] = await pool.query(
+      `SELECT t.*, u.full_name AS driver_name
+       FROM trucks t
+       LEFT JOIN users u ON u.id = t.driver_id
+       WHERE t.company_id = ?
+       ORDER BY t.created_at DESC`,
+      [companyId]
+    );
+    res.json(trucks);
+  } catch (error) {
+    res.status(500).json({ message: "Could not retrieve trucks", error: error.message });
+  }
 };
 
 const updateTruck = async (req, res) => {
-  const { truck_number_plate, truck_capacity, driver_id, status } = req.body;
-  const companyId = await getManagerCompanyId(req.user.id);
+  try {
+    const { truck_number_plate, truck_capacity, driver_id, status } = req.body;
+    const companyId = await getManagerCompanyId(req.user.id);
 
-  const [result] = await pool.query(
-    `UPDATE trucks
-     SET truck_number_plate = ?, truck_capacity = ?, driver_id = ?, status = ?
-     WHERE id = ? AND company_id = ?`,
-    [truck_number_plate, truck_capacity || null, driver_id || null, status || "active", req.params.id, companyId]
-  );
+    const [result] = await pool.query(
+      `UPDATE trucks
+       SET truck_number_plate = ?, truck_capacity = ?, driver_id = ?, status = ?
+       WHERE id = ? AND company_id = ?`,
+      [truck_number_plate, truck_capacity || null, driver_id || null, status || "active", req.params.id, companyId]
+    );
 
-  if (!result.affectedRows) return res.status(404).json({ message: "Truck not found" });
-  res.json({ message: "Truck updated" });
+    if (!result.affectedRows) return res.status(404).json({ message: "Truck not found" });
+    res.json({ message: "Truck updated" });
+  } catch (error) {
+    res.status(500).json({ message: "Could not update truck", error: error.message });
+  }
 };
 
 const deleteTruck = async (req, res) => {
-  const companyId = await getManagerCompanyId(req.user.id);
-  const [result] = await pool.query("DELETE FROM trucks WHERE id = ? AND company_id = ?", [req.params.id, companyId]);
-  if (!result.affectedRows) return res.status(404).json({ message: "Truck not found" });
-  res.json({ message: "Truck deleted" });
+  try {
+    const companyId = await getManagerCompanyId(req.user.id);
+    const [result] = await pool.query("DELETE FROM trucks WHERE id = ? AND company_id = ?", [req.params.id, companyId]);
+    if (!result.affectedRows) return res.status(404).json({ message: "Truck not found" });
+    res.json({ message: "Truck deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Could not delete truck", error: error.message });
+  }
 };
 
 module.exports = { createTruck, getCompanyTrucks, updateTruck, deleteTruck };

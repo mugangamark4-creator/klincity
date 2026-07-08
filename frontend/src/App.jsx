@@ -9,13 +9,12 @@ import HowItWorks from "./pages/public/HowItWorks";
 import Login from "./pages/public/Login";
 import Register from "./pages/public/Register";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
-import MyLocations from "./pages/customer/MyLocations";
-import AddLocation from "./pages/customer/AddLocation";
 import ReportFullBin from "./pages/customer/ReportFullBin";
 import MyPickupRequests from "./pages/customer/MyPickupRequests";
 import PickupDetails from "./pages/customer/PickupDetails";
 import DriverDashboard from "./pages/driver/DriverDashboard";
 import MyAssignedPickups from "./pages/driver/MyAssignedPickups";
+import AvailablePickups from "./pages/driver/AvailablePickups";
 import PickupJobDetails from "./pages/driver/PickupJobDetails";
 import CompletedPickups from "./pages/driver/CompletedPickups";
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
@@ -45,8 +44,6 @@ const App = () => (
         <Route element={<RoleBasedRoute roles={["customer"]} />}>
           <Route path="/customer" element={<DashboardLayout />}>
             <Route index element={<CustomerDashboard />} />
-            <Route path="locations" element={<MyLocations />} />
-            <Route path="locations/new" element={<AddLocation />} />
             <Route path="report-bin" element={<ReportFullBin />} />
             <Route path="pickups" element={<MyPickupRequests />} />
             <Route path="pickups/:id" element={<PickupDetails />} />
@@ -56,6 +53,7 @@ const App = () => (
         <Route element={<RoleBasedRoute roles={["driver"]} />}>
           <Route path="/driver" element={<DashboardLayout />}>
             <Route index element={<DriverDashboard />} />
+            <Route path="available" element={<AvailablePickups />} />
             <Route path="jobs" element={<MyAssignedPickups />} />
             <Route path="jobs/:id" element={<PickupJobDetails />} />
             <Route path="completed" element={<CompletedPickups />} />

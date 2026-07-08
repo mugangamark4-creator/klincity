@@ -9,18 +9,33 @@ const MyLocations = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  const loadLocations = () => {
+  const loadLocations = async () => {
     setLoading(true);
-    locationService.myLocations().then((response) => setLocations(response.data)).finally(() => setLoading(false));
+    try {
+      const response = await locationService.myLocations();
+      setLocations(response.data);
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || "Could not load locations";
+      setMessage(errorMsg);
+      console.error("Error loading locations:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(loadLocations, []);
 
   const removeLocation = async (id) => {
     if (!window.confirm("Delete this location?")) return;
-    await locationService.remove(id);
-    setMessage("Location deleted.");
-    loadLocations();
+    try {
+      await locationService.remove(id);
+      setMessage("Location deleted.");
+      await loadLocations();
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || "Could not delete location";
+      setMessage(errorMsg);
+      console.error("Error deleting location:", error);
+    }
   };
 
   return (
@@ -29,7 +44,7 @@ const MyLocations = () => {
         <h1 className="h3 mb-0">My Locations</h1>
         <Link className="btn btn-cleantrack" to="/customer/locations/new">Add Location</Link>
       </div>
-      <AlertMessage type="success" message={message} />
+      <AlertMessage type={message.includes("deleted") ? "success" : "danger"} message={message} />
       {loading ? <LoadingSpinner /> : (
         <div className="row g-3">
           {locations.map((location) => (

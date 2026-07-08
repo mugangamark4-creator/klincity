@@ -21,21 +21,61 @@ const Register = () => {
     role: "customer"
   });
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value });
+  };
+
+  const validateForm = () => {
+    if (!form.full_name.trim()) {
+      setMessage("Full name is required");
+      return false;
+    }
+    if (!form.email.trim()) {
+      setMessage("Email is required");
+      return false;
+    }
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setMessage("Please enter a valid email address");
+      return false;
+    }
+    if (!form.password || form.password.length < 6) {
+      setMessage("Password must be at least 6 characters long");
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage("");
 
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
     try {
       // Register also logs the user in because the backend returns a JWT.
       const user = await register(form);
       navigate(roleHome[user.role]);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Registration failed");
+      // Handle different types of errors for better user feedback
+      if (error.response?.data?.message) {
+        setMessage(error.response.data.message);
+      } else if (error.response?.status) {
+        setMessage(`Registration failed: ${error.response.status} error. Please try again.`);
+      } else if (error.message) {
+        setMessage(`Error: ${error.message}`);
+      } else {
+        setMessage("Registration failed. Please check your connection and try again.");
+      }
+      console.error("Registration error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,7 +101,9 @@ const Register = () => {
               </select>
               <label className="form-label mt-3">Password</label>
               <input className="form-control" type="password" name="password" value={form.password} onChange={handleChange} required />
-              <button className="btn btn-cleantrack w-100 mt-4">Register</button>
+              <button className="btn btn-cleantrack w-100 mt-4" disabled={loading}>
+                {loading ? "Registering..." : "Register"}
+              </button>
             </form>
             <p className="mt-3 mb-0">Already have an account? <Link to="/login">Login</Link></p>
           </div>

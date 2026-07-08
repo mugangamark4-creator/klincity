@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS cleantrack_uganda;
-CREATE DATABASE cleantrack_uganda;
-USE cleantrack_uganda;
+DROP DATABASE IF EXISTS klincity_uganda;
+CREATE DATABASE klincity_uganda;
+USE klincity_uganda;
 
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -70,7 +70,9 @@ CREATE TABLE waste_categories (
 CREATE TABLE pickup_requests (
   id INT AUTO_INCREMENT PRIMARY KEY,
   customer_id INT NOT NULL,
-  location_id INT NOT NULL,
+  location_id INT,
+  location_name VARCHAR(120),
+  district VARCHAR(80),
   waste_category_id INT NOT NULL,
   description TEXT,
   photo VARCHAR(255),

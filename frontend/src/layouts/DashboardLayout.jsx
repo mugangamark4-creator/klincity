@@ -5,13 +5,12 @@ import { useAuth } from "../context/AuthContext";
 const menus = {
   customer: [
     ["Dashboard", "/customer"],
-    ["My Locations", "/customer/locations"],
-    ["Add Location", "/customer/locations/new"],
     ["Report Full Bin", "/customer/report-bin"],
     ["Pickup Requests", "/customer/pickups"]
   ],
   driver: [
     ["Dashboard", "/driver"],
+    ["Available Pickups", "/driver/available"],
     ["Assigned Pickups", "/driver/jobs"],
     ["Completed Pickups", "/driver/completed"]
   ],

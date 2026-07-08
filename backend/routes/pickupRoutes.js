@@ -4,7 +4,9 @@ const {
   getMyRequests,
   getPickupById,
   cancelPickup,
-  getPendingPickups
+  getPendingPickups,
+  getAvailablePickups,
+  claimPickup
 } = require("../controllers/pickupController");
 const { protect } = require("../middleware/authMiddleware");
 const { allowRoles } = require("../middleware/roleMiddleware");
@@ -15,6 +17,8 @@ const router = express.Router();
 router.post("/", protect, allowRoles("customer"), usePickupPhotoFolder, upload.single("photo"), createPickup);
 router.get("/my-requests", protect, allowRoles("customer"), getMyRequests);
 router.get("/pending/all", protect, allowRoles("manager", "admin"), getPendingPickups);
+router.get("/available", protect, allowRoles("driver"), getAvailablePickups);
+router.post("/:id/claim", protect, allowRoles("driver"), claimPickup);
 router.get("/:id", protect, allowRoles("customer", "driver", "manager", "admin"), getPickupById);
 router.put("/:id/cancel", protect, allowRoles("customer"), cancelPickup);
 

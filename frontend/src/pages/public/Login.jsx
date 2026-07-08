@@ -31,7 +31,17 @@ const Login = () => {
       const user = await login(form);
       navigate(roleHome[user.role]);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Login failed");
+      // Handle different types of errors for better user feedback
+      if (error.response?.data?.message) {
+        setMessage(error.response.data.message);
+      } else if (error.response?.status) {
+        setMessage(`Login failed: ${error.response.status} error. Please try again.`);
+      } else if (error.message) {
+        setMessage(`Error: ${error.message}`);
+      } else {
+        setMessage("Login failed. Please check your connection and try again.");
+      }
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }

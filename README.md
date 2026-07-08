@@ -1,1 +1,3 @@
 # klincity
+This is the klincity application designed with an aim to aid in waste management within our community 
+This application is able to register user as residents who need waste services and companies that offer said services thus bridging the gap between the two and making waste management all the more efficient for any and more information there are files that will provide deeper understand on the us of the application and your free to export the code and run it locally for testing

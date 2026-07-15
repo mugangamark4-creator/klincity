@@ -1,7 +1,7 @@
 import api from "./api";
 
 export const pickupService = {
-  create: (formData) => api.post("/pickups", formData, { headers: { "Content-Type": "multipart/form-data" } }),
+  create: (formData) => api.post("/pickups", formData),
   myRequests: () => api.get("/pickups/my-requests"),
   getById: (id) => api.get(`/pickups/${id}`),
   cancel: (id) => api.put(`/pickups/${id}/cancel`),

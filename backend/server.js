@@ -15,11 +15,6 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const { GoogleGenAI } = require("@google/genai");
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5173",
@@ -67,6 +62,35 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Server error", error: err.message });
 });
 
-app.listen(PORT, () => {
-  console.log(`CleanTrack Uganda backend running on port ${PORT}`);
+const startServer = (port) => {
+  return app.listen(port, () => {
+    console.log(`CleanTrack Uganda backend running on port ${port}`);
+  });
+};
+
+let server = startServer(PORT);
+
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    const fallbackPort = PORT === 5000 ? 5001 : PORT + 1;
+    console.error(`Port ${PORT} is already in use. Attempting to start on port ${fallbackPort}...`);
+    server = startServer(fallbackPort);
+    server.on("error", (fallbackErr) => {
+      console.error("Fallback server failed to start:", fallbackErr);
+      process.exit(1);
+    });
+  } else {
+    console.error("Server failed to start:", err);
+    process.exit(1);
+  }
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught exception:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled rejection:", reason);
+  process.exit(1);
 });

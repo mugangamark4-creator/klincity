@@ -10,10 +10,12 @@
     "db:test": "node scripts/testDatabase.js"
   },
   "dependencies": {
+    "axios": "^1.18.1",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
+    "form-data": "^4.0.6",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.2.0",
     "mysql2": "^3.12.0"
